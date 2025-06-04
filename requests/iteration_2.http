@@ -1,0 +1,491 @@
+
+
+### Prerequisites (3 steps)
+### 1. Create new user by authorized admin
+POST http://localhost:4111/api/v1/admin/users
+accept: */*
+Authorization: Basic YWRtaW46YWRtaW4=
+Content-Type: application/json
+
+{
+  "username": "Test_User1",
+  "password": "Test_User1!",
+  "role": "USER"
+}
+
+###
+### 2. Create 2 accounts (SHOULD BE EXECUTED TWICE, to create two new accounts)
+POST http://localhost:4111/api/v1/accounts
+accept: */*
+Authorization: Basic VGVzdF9Vc2VyMTpUZXN0X1VzZXIxIQ==
+Content-Type: application/x-www-form-urlencoded
+
+###
+### 3. Check if the accounts, created on the previous step exist and that their balance is 0
+GET http://localhost:4111/api/v1/customer/accounts
+accept: */*
+Authorization: Basic VGVzdF9Vc2VyMTpUZXN0X1VzZXIxIQ==
+
+
+
+
+###Positive: Authorized user can deposit valid amount of money to their account (1) (this test case consist of 3 requests)
+### 1. Check initial balance
+GET http://localhost:4111/api/v1/customer/accounts
+accept: */*
+Authorization: Basic VGVzdF9Vc2VyMTpUZXN0X1VzZXIxIQ==
+
+###
+### 2. Deposit valid amount of money to account
+POST http://localhost:4111/api/v1/accounts/deposit
+accept: */*
+Authorization: Basic VGVzdF9Vc2VyMTpUZXN0X1VzZXIxIQ==
+Content-Type: application/json
+
+{
+  "id": 17,
+  "balance": 1
+}
+
+###
+### 3. Check final balance
+GET http://localhost:4111/api/v1/customer/accounts
+accept: */*
+Authorization: Basic VGVzdF9Vc2VyMTpUZXN0X1VzZXIxIQ==
+
+
+
+
+###Positive: Authorized user can deposit valid amount of money to their account (4999) (this test case consist of 3 requests)
+### 1. Check initial balance
+GET http://localhost:4111/api/v1/customer/accounts
+accept: */*
+Authorization: Basic VGVzdF9Vc2VyMTpUZXN0X1VzZXIxIQ==
+
+###
+### 2. Deposit valid money to account
+POST http://localhost:4111/api/v1/accounts/deposit
+accept: */*
+Authorization: Basic VGVzdF9Vc2VyMTpUZXN0X1VzZXIxIQ==
+Content-Type: application/json
+
+{
+  "id": 1,
+  "balance": 4999
+}
+
+###
+### 3. Check final balance
+GET http://localhost:4111/api/v1/customer/accounts
+accept: */*
+Authorization: Basic VGVzdF9Vc2VyMTpUZXN0X1VzZXIxIQ==
+
+
+
+
+###Positive: Authorized user can deposit valid amount of money to their account (5000) (this test case consist of 3 requests)
+### 1. Check initial balance
+GET http://localhost:4111/api/v1/customer/accounts
+accept: */*
+Authorization: Basic VGVzdF9Vc2VyMTpUZXN0X1VzZXIxIQ==
+
+###
+### 2. Deposit money to account
+POST http://localhost:4111/api/v1/accounts/deposit
+accept: */*
+Authorization: Basic VGVzdF9Vc2VyMTpUZXN0X1VzZXIxIQ==
+Content-Type: application/json
+
+{
+  "id": 1,
+  "balance": 5000
+}
+
+###
+### 3. Check final balance
+GET http://localhost:4111/api/v1/customer/accounts
+accept: */*
+Authorization: Basic VGVzdF9Vc2VyMTpUZXN0X1VzZXIxIQ==
+
+
+
+
+###Negative: Authorized user CANNOT deposit money to their account if amount of money is negative number (this test case consist of 3 requests)
+### 1. Check initial balance
+GET http://localhost:4111/api/v1/customer/accounts
+accept: */*
+Authorization: Basic VGVzdF9Vc2VyMTpUZXN0X1VzZXIxIQ==
+
+###
+### 2. Deposit money to account
+POST http://localhost:4111/api/v1/accounts/deposit
+accept: */*
+Authorization: Basic VGVzdF9Vc2VyMTpUZXN0X1VzZXIxIQ==
+Content-Type: application/json
+
+{
+  "id": 1,
+  "balance": -1
+}
+
+###
+### 3. Check final balance
+GET http://localhost:4111/api/v1/customer/accounts
+accept: */*
+Authorization: Basic VGVzdF9Vc2VyMTpUZXN0X1VzZXIxIQ==
+
+
+
+
+###Negative: Authorized user CANNOT deposit money to their account if amount of money is 0 (this test case consist of 3 requests)
+### 1. Check initial balance
+GET http://localhost:4111/api/v1/customer/accounts
+accept: */*
+Authorization: Basic VGVzdF9Vc2VyMTpUZXN0X1VzZXIxIQ==
+
+###
+### 2. Deposit money to account
+POST http://localhost:4111/api/v1/accounts/deposit
+accept: */*
+Authorization: Basic VGVzdF9Vc2VyMTpUZXN0X1VzZXIxIQ==
+Content-Type: application/json
+
+{
+  "id": 1,
+  "balance": 0
+}
+
+###
+### 3. Check final balance
+GET http://localhost:4111/api/v1/customer/accounts
+accept: */*
+Authorization: Basic VGVzdF9Vc2VyMTpUZXN0X1VzZXIxIQ==
+
+
+
+
+###Negative: Authorized user CANNOT deposit money to their account if amount of money is more than 5000 (5001) (this test case consist of 3 requests)
+### 1. Check initial balance
+GET http://localhost:4111/api/v1/customer/accounts
+accept: */*
+Authorization: Basic VGVzdF9Vc2VyMTpUZXN0X1VzZXIxIQ==
+
+###
+### 2. Deposit money to account
+POST http://localhost:4111/api/v1/accounts/deposit
+accept: */*
+Authorization: Basic VGVzdF9Vc2VyMTpUZXN0X1VzZXIxIQ==
+Content-Type: application/json
+
+{
+  "id": 1,
+  "balance": 5001
+}
+
+###
+### 3. Check final balance
+GET http://localhost:4111/api/v1/customer/accounts
+accept: */*
+Authorization: Basic VGVzdF9Vc2VyMTpUZXN0X1VzZXIxIQ==
+
+
+
+
+### Positive: Authorized user can transfer valid money from one account to another (1) (this test case consist of 3 requests)
+### 1. Check initial balance of both accounts
+GET http://localhost:4111/api/v1/customer/accounts
+accept: */*
+Authorization: Basic VGVzdF9Vc2VyMTpUZXN0X1VzZXIxIQ==
+
+###
+### 2. Transfer money from one account to another
+POST http://localhost:4111/api/v1/accounts/transfer
+accept: */*
+Authorization: Basic VGVzdF9Vc2VyMTpUZXN0X1VzZXIxIQ==
+Content-Type: application/json
+
+{
+  "senderAccountId": 1,
+  "receiverAccountId": 2,
+  "amount": 1
+}
+
+###
+### 3. Check final balance of both accounts
+GET http://localhost:4111/api/v1/customer/accounts
+accept: */*
+Authorization: Basic VGVzdF9Vc2VyMTpUZXN0X1VzZXIxIQ==
+
+
+
+
+### Positive: Authorized user can transfer valid money from one account to another (10000) (this test case consist of 3 requests)
+### 1. Check initial balance of both accounts
+GET http://localhost:4111/api/v1/customer/accounts
+accept: */*
+Authorization: Basic VGVzdF9Vc2VyMTpUZXN0X1VzZXIxIQ==
+
+###
+### 2. Transfer money from one account to another
+POST http://localhost:4111/api/v1/accounts/transfer
+accept: */*
+Authorization: Basic VGVzdF9Vc2VyMTpUZXN0X1VzZXIxIQ==
+Content-Type: application/json
+
+{
+  "senderAccountId": 1,
+  "receiverAccountId": 2,
+  "amount": 10000
+}
+
+###
+### 3. Check final balance of both accounts
+GET http://localhost:4111/api/v1/customer/accounts
+accept: */*
+Authorization: Basic VGVzdF9Vc2VyMTpUZXN0X1VzZXIxIQ==
+
+
+
+
+### Negative: Authorized user CANNOT transfer amount money from one account to another if this amount of money doesn't exist on their account (this test case consist of 3 requests)
+### 1. Check initial balance of both accounts
+GET http://localhost:4111/api/v1/customer/accounts
+accept: */*
+Authorization: Basic VGVzdF9Vc2VyMTpUZXN0X1VzZXIxIQ==
+
+###
+### 2. Transfer money from one account to another
+POST http://localhost:4111/api/v1/accounts/transfer
+accept: */*
+Authorization: Basic VGVzdF9Vc2VyMTpUZXN0X1VzZXIxIQ==
+Content-Type: application/json
+
+{
+  "senderAccountId": 1,
+  "receiverAccountId": 2,
+  "amount": 9000
+}
+
+###
+### 3. Check final balance of both accounts
+GET http://localhost:4111/api/v1/customer/accounts
+accept: */*
+Authorization: Basic VGVzdF9Vc2VyMTpUZXN0X1VzZXIxIQ==
+
+
+
+
+### Negative: Authorized user CANNOT transfer invalid amount money from one account to another (-1) (this test case consist of 3 requests)
+### 1. Check initial balance of both accounts
+GET http://localhost:4111/api/v1/customer/accounts
+accept: */*
+Authorization: Basic VGVzdF9Vc2VyMTpUZXN0X1VzZXIxIQ==
+
+###
+### 2. Transfer money from one account to another
+POST http://localhost:4111/api/v1/accounts/transfer
+accept: */*
+Authorization: Basic VGVzdF9Vc2VyMTpUZXN0X1VzZXIxIQ==
+Content-Type: application/json
+
+{
+  "senderAccountId": 1,
+  "receiverAccountId": 2,
+  "amount": -1
+}
+
+###
+### 3. Check final balance of both accounts
+GET http://localhost:4111/api/v1/customer/accounts
+accept: */*
+Authorization: Basic VGVzdF9Vc2VyMTpUZXN0X1VzZXIxIQ==
+
+
+
+
+### Negative: Authorized user CANNOT transfer invalid amount money from one account to another (0) (this test case consist of 3 requests)
+### 1. Check initial balance of both accounts
+GET http://localhost:4111/api/v1/customer/accounts
+accept: */*
+Authorization: Basic VGVzdF9Vc2VyMTpUZXN0X1VzZXIxIQ==
+
+###
+### 2. Transfer money from one account to another
+POST http://localhost:4111/api/v1/accounts/transfer
+accept: */*
+Authorization: Basic VGVzdF9Vc2VyMTpUZXN0X1VzZXIxIQ==
+Content-Type: application/json
+
+{
+  "senderAccountId": 1,
+  "receiverAccountId": 2,
+  "amount": 0
+}
+
+###
+### 3. Check final balance of both accounts
+GET http://localhost:4111/api/v1/customer/accounts
+accept: */*
+Authorization: Basic VGVzdF9Vc2VyMTpUZXN0X1VzZXIxIQ==
+
+
+
+
+### Negative: Authorized user CANNOT transfer invalid amount money from one account to another (10001) (this test case consist of 3 requests)
+### 1. Check initial balance of both accounts
+GET http://localhost:4111/api/v1/customer/accounts
+accept: */*
+Authorization: Basic VGVzdF9Vc2VyMTpUZXN0X1VzZXIxIQ==
+
+###
+### 2. Transfer money from one account to another
+POST http://localhost:4111/api/v1/accounts/transfer
+accept: */*
+Authorization: Basic VGVzdF9Vc2VyMTpUZXN0X1VzZXIxIQ==
+Content-Type: application/json
+
+{
+  "senderAccountId": 1,
+  "receiverAccountId": 2,
+  "amount": 10001
+}
+
+###
+### 3. Check final balance of both accounts
+GET http://localhost:4111/api/v1/customer/accounts
+accept: */*
+Authorization: Basic VGVzdF9Vc2VyMTpUZXN0X1VzZXIxIQ==
+
+
+
+
+### Positive: Authorized user can change their name using valid value (this test case consist of 3 requests)
+### 1. Check initial name of customer
+GET http://localhost:4111/api/v1/customer/profile
+accept: */*
+Authorization: Basic VGVzdF9Vc2VyMTpUZXN0X1VzZXIxIQ==
+
+###
+### 2. Change name
+PUT http://localhost:4111/api/v1/customer/profile
+accept: */*
+Authorization: Basic VGVzdF9Vc2VyMTpUZXN0X1VzZXIxIQ==
+Content-Type: application/json
+
+{
+  "name": "New name"
+}
+
+###
+### 3. Check that name has been updated succesfully
+GET http://localhost:4111/api/v1/customer/profile
+accept: */*
+Authorization: Basic VGVzdF9Vc2VyMTpUZXN0X1VzZXIxIQ==
+
+
+
+
+### Negative: Authorized user CANNOT change their name using invalid value (one word) (this test case consist of 3 requests)
+### 1. Check initial name of customer
+GET http://localhost:4111/api/v1/customer/profile
+accept: */*
+Authorization: Basic VGVzdF9Vc2VyMTpUZXN0X1VzZXIxIQ==
+
+###
+### 2. Change name
+PUT http://localhost:4111/api/v1/customer/profile
+accept: */*
+Authorization: Basic VGVzdF9Vc2VyMTpUZXN0X1VzZXIxIQ==
+Content-Type: application/json
+
+{
+  "name": "Newname"
+}
+
+###
+### 3. Check that name has not been updated
+GET http://localhost:4111/api/v1/customer/profile
+accept: */*
+Authorization: Basic VGVzdF9Vc2VyMTpUZXN0X1VzZXIxIQ==
+
+
+
+
+### Negative: Authorized user CANNOT change their name using invalid value (+ one digit) (this test case consist of 3 requests)
+### 1. Check initial name of customer
+GET http://localhost:4111/api/v1/customer/profile
+accept: */*
+Authorization: Basic VGVzdF9Vc2VyMTpUZXN0X1VzZXIxIQ==
+
+###
+### 2. Change name
+PUT http://localhost:4111/api/v1/customer/profile
+accept: */*
+Authorization: Basic VGVzdF9Vc2VyMTpUZXN0X1VzZXIxIQ==
+Content-Type: application/json
+
+{
+  "name": "New name1"
+}
+
+###
+### 3. Check that name has not been updated
+GET http://localhost:4111/api/v1/customer/profile
+accept: */*
+Authorization: Basic VGVzdF9Vc2VyMTpUZXN0X1VzZXIxIQ==
+
+
+
+
+### Negative: Authorized user CANNOT change their name using invalid value (+ one special symbol) (this test case consist of 3 requests)
+### 1. Check initial name of customer
+GET http://localhost:4111/api/v1/customer/profile
+accept: */*
+Authorization: Basic VGVzdF9Vc2VyMTpUZXN0X1VzZXIxIQ==
+
+###
+### 2. Change name
+PUT http://localhost:4111/api/v1/customer/profile
+accept: */*
+Authorization: Basic VGVzdF9Vc2VyMTpUZXN0X1VzZXIxIQ==
+Content-Type: application/json
+
+{
+  "name": "New name!"
+}
+
+###
+### 3. Check that name has not been updated
+GET http://localhost:4111/api/v1/customer/profile
+accept: */*
+Authorization: Basic VGVzdF9Vc2VyMTpUZXN0X1VzZXIxIQ==
+
+
+
+
+### Negative: Authorized user CANNOT change their name using invalid value (empty string) (this test case consist of 3 requests)
+### 1. Check initial name of customer
+GET http://localhost:4111/api/v1/customer/profile
+accept: */*
+Authorization: Basic VGVzdF9Vc2VyMTpUZXN0X1VzZXIxIQ==
+
+###
+### 2. Change name
+PUT http://localhost:4111/api/v1/customer/profile
+accept: */*
+Authorization: Basic VGVzdF9Vc2VyMTpUZXN0X1VzZXIxIQ==
+Content-Type: application/json
+
+{
+  "name": ""
+}
+
+###
+### 3. Check that name has not been updated
+GET http://localhost:4111/api/v1/customer/profile
+accept: */*
+Authorization: Basic VGVzdF9Vc2VyMTpUZXN0X1VzZXIxIQ==
+
+
+
+
