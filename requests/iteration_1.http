@@ -1,0 +1,225 @@
+### Positive: Admin can log in using valid credentials and get auth token
+### Authorization: Basic YWRtaW46YWRtaW4=
+POST http://localhost:4111/api/v1/auth/login
+accept: */*
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "admin"
+}
+
+### Positive: Authorized admin can create new user with valid data
+POST http://localhost:4111/api/v1/admin/users
+accept: */*
+Authorization: Basic YWRtaW46YWRtaW4=
+Content-Type: application/json
+
+{
+  "username": "Yura_1998",
+  "password": "Kate1998!",
+  "role": "USER"
+}
+
+### Negative: Authorized admin cannot create new user with role is not from list
+POST http://localhost:4111/api/v1/admin/users
+accept: */*
+Authorization: Basic YWRtaW46YWRtaW4=
+Content-Type: application/json
+
+{
+  "username": "{{$random.name.firstName}}",
+  "password": "UserPassword1!",
+  "role": "STUDENT"
+}
+
+
+
+### Negative: Authorized admin cannot create new user with blank username
+POST http://localhost:4111/api/v1/admin/users
+accept: */*
+Authorization: Basic YWRtaW46YWRtaW4=
+Content-Type: application/json
+
+{
+  "username": "",
+  "password": "Kate1998!",
+  "role": "USER"
+}
+
+### Negative: Authorized admin cannot create new user with username consists of 2 characters
+POST http://localhost:4111/api/v1/admin/users
+accept: */*
+Authorization: Basic YWRtaW46YWRtaW4=
+Content-Type: application/json
+
+{
+  "username": "{{$random.alphabetic(2)}}",
+  "password": "Kate1998!",
+  "role": "USER"
+}
+
+### Negative: Authorized admin cannot create new user with username consists of 16 characters
+POST http://localhost:4111/api/v1/admin/users
+accept: */*
+Authorization: Basic YWRtaW46YWRtaW4=
+Content-Type: application/json
+
+{
+  "username": "{{$random.alphabetic(16)}}",
+  "password": "Kate1998!",
+  "role": "USER"
+}
+
+### Negative: Authorized admin cannot create new user with username has invalid characters (@#$%^&*)
+POST http://localhost:4111/api/v1/admin/users
+accept: */*
+Authorization: Basic YWRtaW46YWRtaW4=
+Content-Type: application/json
+
+{
+  "username": "Yura#",
+  "password": "Kate1998!",
+  "role": "USER"
+}
+
+### Negative: Authorized admin cannot create new user with valid username and invalid password (less then 8 symbols)
+POST http://localhost:4111/api/v1/admin/users
+accept: */*
+Authorization: Basic YWRtaW46YWRtaW4=
+Content-Type: application/json
+
+{
+  "username": "{{$random.name.firstName}}",
+  "password": "Seven7!",
+  "role": "USER"
+}
+
+### Negative: Authorized admin cannot create new user with valid username and invalid password (without special characters)
+POST http://localhost:4111/api/v1/admin/users
+accept: */*
+Authorization: Basic YWRtaW46YWRtaW4=
+Content-Type: application/json
+
+{
+  "username": "{{$random.name.firstName}}",
+  "password": "NoSpecial1",
+  "role": "USER"
+}
+
+### Negative: Authorized admin cannot create new user with valid username and invalid password (without an uppercase letter)
+POST http://localhost:4111/api/v1/admin/users
+accept: */*
+Authorization: Basic YWRtaW46YWRtaW4=
+Content-Type: application/json
+
+{
+  "username": "{{$random.name.firstName}}",
+  "password": "nouppercase1!",
+  "role": "USER"
+}
+
+### Negative: Authorized admin cannot create new user with valid username and invalid password (without a lowercase letter)
+POST http://localhost:4111/api/v1/admin/users
+accept: */*
+Authorization: Basic YWRtaW46YWRtaW4=
+Content-Type: application/json
+
+{
+  "username": "{{$random.name.firstName}}",
+  "password": "NOLOWERCASE1!",
+  "role": "USER"
+}
+
+### Negative: Authorized admin cannot create new user with valid username and invalid password (without digits)
+POST http://localhost:4111/api/v1/admin/users
+accept: */*
+Authorization: Basic YWRtaW46YWRtaW4=
+Content-Type: application/json
+
+{
+  "username": "{{$random.name.firstName}}",
+  "password": "NoNumber!",
+  "role": "USER"
+}
+
+### Negative: Authorized admin cannot create new user with valid username and invalid password (with spaces)
+POST http://localhost:4111/api/v1/admin/users
+accept: */*
+Authorization: Basic YWRtaW46YWRtaW4=
+Content-Type: application/json
+
+{
+  "username": "{{$random.name.firstName}}",
+  "password": "With spaces1!",
+  "role": "USER"
+}
+
+### Negative: Authorized admin cannot create new user with username with blank password
+POST http://localhost:4111/api/v1/admin/users
+accept: */*
+Authorization: Basic YWRtaW46YWRtaW4=
+Content-Type: application/json
+
+{
+  "username": "Yura_228",
+  "password": "",
+  "role": "USER"
+}
+
+### Negative: Authorized admin cannot create user that already exist
+POST http://localhost:4111/api/v1/admin/users
+accept: */*
+Authorization: Basic YWRtaW46YWRtaW4=
+Content-Type: application/json
+
+{
+  "username": "kate1998",
+  "password": "Kate1998!",
+  "role": "USER"
+}
+
+### Positive: User can log in using valid credentials and get auth token
+### Authorization: Basic a2F0ZTE5OTg6S2F0ZTE5OTgh
+POST http://localhost:4111/api/v1/auth/login
+accept: */*
+Content-Type: application/json
+
+{
+  "username": "kate1998",
+  "password": "Kate1998!"
+}
+
+### Positive: Authorized user can create an account (this test case consist of 2 requests)
+### 1. Creation account
+POST http://localhost:4111/api/v1/accounts
+accept: */*
+Authorization: Basic a2F0ZTE5OTg6S2F0ZTE5OTgh
+Content-Type: application/x-www-form-urlencoded
+
+###
+### 2. Check if the account, created on the previous step exists or not
+GET http://localhost:4111/api/v1/customer/accounts
+accept: */*
+Authorization: Basic a2F0ZTE5OTg6S2F0ZTE5OTgh
+
+
+
+
+###Positive: Authorized admin can delete user by id
+DELETE http://localhost:4111/api/v1/admin/users/1
+accept: */*
+Authorization: Basic YWRtaW46YWRtaW4=
+
+###
+
+
+
+
+
+
+
+
+
+
+
