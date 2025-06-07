@@ -1,7 +1,7 @@
 
 
-### Prerequisites (3 steps)
-### 1. Create new user by authorized admin
+### @BeforeEach
+### 1. Create first user by authorized admin
 POST http://localhost:4111/api/v1/admin/users
 accept: */*
 Authorization: Basic YWRtaW46YWRtaW4=
@@ -14,7 +14,7 @@ Content-Type: application/json
 }
 
 ###
-### 2. Create 2 accounts (SHOULD BE EXECUTED TWICE, to create two new accounts)
+### 2. Create 2 accounts for first user (SHOULD BE EXECUTED TWICE, to create two new accounts)
 POST http://localhost:4111/api/v1/accounts
 accept: */*
 Authorization: Basic VGVzdF9Vc2VyMTpUZXN0X1VzZXIxIQ==
@@ -25,6 +25,32 @@ Content-Type: application/x-www-form-urlencoded
 GET http://localhost:4111/api/v1/customer/accounts
 accept: */*
 Authorization: Basic VGVzdF9Vc2VyMTpUZXN0X1VzZXIxIQ==
+
+###
+### 4. Create second user by authorized admin
+POST http://localhost:4111/api/v1/admin/users
+accept: */*
+Authorization: Basic YWRtaW46YWRtaW4=
+Content-Type: application/json
+
+{
+  "username": "Test_User2",
+  "password": "Test_User2!",
+  "role": "USER"
+}
+
+###
+### 5. Create 2 accounts for second user (SHOULD BE EXECUTED TWICE, to create two new accounts)
+POST http://localhost:4111/api/v1/accounts
+accept: */*
+Authorization: Basic VGVzdF9Vc2VyMjpUZXN0X1VzZXIyIQ==
+Content-Type: application/x-www-form-urlencoded
+
+###
+### 6. Check if the accounts, created on the previous step exist and that their balance is 0
+GET http://localhost:4111/api/v1/customer/accounts
+accept: */*
+Authorization: Basic VGVzdF9Vc2VyMjpUZXN0X1VzZXIyIQ==
 
 
 
@@ -489,3 +515,258 @@ Authorization: Basic VGVzdF9Vc2VyMTpUZXN0X1VzZXIxIQ==
 
 
 
+
+
+
+
+
+
+
+### Positive: Existing user can log in and get auth token
+POST http://localhost:4111/api/v1/auth/login
+accept: */*
+Content-Type: application/json
+
+{
+  "username": "Test_User1",
+  "password": "Test_User1!"
+}
+
+
+
+
+### Negative: Unxisting user cannot log in and cannot get auth token
+POST http://localhost:4111/api/v1/auth/login
+accept: */*
+Content-Type: application/json
+
+{
+  "username": "Unexisting_user1",
+  "password": "Unexisting_user1!"
+}
+
+
+
+
+### Negative: Existing user cannot log in using valid username, but invalid password
+POST http://localhost:4111/api/v1/auth/login
+accept: */*
+Content-Type: application/json
+
+{
+  "username": "Test_User1",
+  "password": "Incorrect_password1!"
+}
+
+
+
+
+### Negative: Existing user cannot log in using valid password, but invalid username
+POST http://localhost:4111/api/v1/auth/login
+accept: */*
+Content-Type: application/json
+
+{
+  "username": "Unexist_User1",
+  "password": "Test_User1!"
+}
+
+
+
+
+### Positive: Authorized user can view empty list of transactions of their account if there is not any transactions
+### Check all user transactions by account id
+GET http://localhost:4111/api/v1/accounts/1/transactions
+accept: */*
+Authorization: Basic VGVzdF9Vc2VyMTpUZXN0X1VzZXIxIQ==
+
+
+
+
+### Positive: Authorized user can view all transactions of their account after deposit (this test case consist of 2 requests)
+### 1. Deposit money to account
+POST http://localhost:4111/api/v1/accounts/deposit
+accept: */*
+Authorization: Basic VGVzdF9Vc2VyMTpUZXN0X1VzZXIxIQ==
+Content-Type: application/json
+
+{
+  "id": 1,
+  "balance": 5000
+}
+
+###
+### 2. Check all user transactions by account id
+GET http://localhost:4111/api/v1/accounts/1/transactions
+accept: */*
+Authorization: Basic VGVzdF9Vc2VyMTpUZXN0X1VzZXIxIQ==
+
+
+
+
+### Positive: Authorized user can view all transactions of their account after transfer (this test case consist of 4 requests)
+### 1. Deposit money to account
+POST http://localhost:4111/api/v1/accounts/deposit
+accept: */*
+Authorization: Basic VGVzdF9Vc2VyMTpUZXN0X1VzZXIxIQ==
+Content-Type: application/json
+
+{
+  "id": 1,
+  "balance": 5000
+}
+
+###
+### 2. Transfer money from one account to another
+POST http://localhost:4111/api/v1/accounts/transfer
+accept: */*
+Authorization: Basic VGVzdF9Vc2VyMTpUZXN0X1VzZXIxIQ==
+Content-Type: application/json
+
+{
+  "senderAccountId": 1,
+  "receiverAccountId": 2,
+  "amount": 500
+}
+
+###
+### 3. Check all user account transactions of senderAccountId
+GET http://localhost:4111/api/v1/accounts/1/transactions
+accept: */*
+Authorization: Basic VGVzdF9Vc2VyMTpUZXN0X1VzZXIxIQ==
+
+###
+### 4. Check all user account transactions of receiverAccountId
+GET http://localhost:4111/api/v1/accounts/2/transactions
+accept: */*
+Authorization: Basic VGVzdF9Vc2VyMTpUZXN0X1VzZXIxIQ==
+
+
+
+
+### Positive: Authorized user cannot view transactions of another user's account
+GET http://localhost:4111/api/v1/accounts/3/transactions
+accept: */*
+Authorization: Basic VGVzdF9Vc2VyMTpUZXN0X1VzZXIxIQ==
+
+
+
+
+### Positive: Authorized user cannot view transactions of account which is not exist
+GET http://localhost:4111/api/v1/accounts/10/transactions
+accept: */*
+Authorization: Basic VGVzdF9Vc2VyMTpUZXN0X1VzZXIxIQ==
+
+
+
+
+### Positive: Authorized admin can delete existing user (this test case consist of 2 requests)
+### 1. Delete existing user
+DELETE http://localhost:4111/api/v1/admin/users/1
+accept: */*
+Authorization: Basic YWRtaW46YWRtaW4=
+
+###
+### 2. Check whether the user has been deleted on the previous step
+GET http://localhost:4111/api/v1/admin/users
+accept: */*
+Authorization: Basic YWRtaW46YWRtaW4=
+
+
+
+
+### Negative: Authorized admin cannot delete unexisting user
+DELETE http://localhost:4111/api/v1/admin/users/123
+accept: */*
+Authorization: Basic YWRtaW46YWRtaW4=
+
+
+
+
+
+### Create new user with role "ADMIN" by authorized default admin (this test case consist of 2 requests)
+### 1. Create new admin
+POST http://localhost:4111/api/v1/admin/users
+accept: */*
+Authorization: Basic YWRtaW46YWRtaW4=
+Content-Type: application/json
+
+{
+  "username": "Test_Admin1",
+  "password": "Test_Admin1!",
+  "role": "ADMIN"
+}
+
+###
+### 2. Check whether we can log in as a new admin
+POST http://localhost:4111/api/v1/auth/login
+accept: */*
+Content-Type: application/json
+
+{
+"username": "Test_Admin1",
+"password": "Test_Admin1!"
+}
+
+
+
+
+### Positive: Authorized user with role "USER" cannot create users (this test case consist of 2 requests)
+### 1. Create new user
+POST http://localhost:4111/api/v1/admin/users
+accept: */*
+Authorization: Basic VGVzdF9Vc2VyMTpUZXN0X1VzZXIxIQ==
+Content-Type: application/json
+
+{
+  "username": "Test_User3",
+  "password": "Test_User3!",
+  "role": "USER"
+}
+
+###
+### 2. Check whether the user has been created on the previous step
+GET http://localhost:4111/api/v1/admin/users
+accept: */*
+Authorization: Basic YWRtaW46YWRtaW4=
+
+
+
+
+### Positive: Authorized user with role "USER" cannot delete existing user (this test case consist of 3 requests)
+### 1. Create new user by admin
+POST http://localhost:4111/api/v1/admin/users
+accept: */*
+Authorization: Basic YWRtaW46YWRtaW4=
+Content-Type: application/json
+
+{
+  "username": "Test_User3",
+  "password": "Test_User3!",
+  "role": "USER"
+}
+
+###
+### 2. Delete existing user by other user with role "USER"
+DELETE http://localhost:4111/api/v1/admin/users/2
+accept: */*
+Authorization: Basic VGVzdF9Vc2VyMTpUZXN0X1VzZXIxIQ==
+
+###
+### 3. Check whether the user has been deleted on the previous step
+GET http://localhost:4111/api/v1/admin/users
+accept: */*
+Authorization: Basic YWRtaW46YWRtaW4=
+
+
+
+
+###Positive: Authorized user with role "USER" cannot get list of all users
+GET http://localhost:4111/api/v1/admin/users
+accept: */*
+Authorization: Basic VGVzdF9Vc2VyMTpUZXN0X1VzZXIxIQ==
+
+
+
+
+###
