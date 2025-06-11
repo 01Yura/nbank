@@ -1,4 +1,4 @@
-package iteration2;
+package iteration2_junior_level;
 
 import io.restassured.RestAssured;
 import io.restassured.filter.log.RequestLoggingFilter;
