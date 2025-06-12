@@ -34,5 +34,12 @@ public class ResponseSpecs {
                 .expectBody(errorKey, Matchers.hasItem(errorValue))
                 .build();
     }
+
+
+    public static ResponseSpecification responseReturns400WithoutKeyValueSpec() {
+        return defaultResponseSpecBuilder()
+                .expectStatusCode(400)
+                .build();
+    }
 }
 
