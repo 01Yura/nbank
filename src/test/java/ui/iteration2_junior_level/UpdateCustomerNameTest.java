@@ -58,6 +58,7 @@ public class UpdateCustomerNameTest extends SetupTest {
         $(Selectors.byAttribute("placeholder", "Enter new name"))
                 .shouldBe(Condition.visible)
                 .shouldBe(Condition.clickable).sendKeys(newUserName);
+        Thread.sleep(1000);
         $(Selectors.byAttribute("placeholder", "Enter new name")).shouldHave(Condition.attribute("value", newUserName));
 
 
